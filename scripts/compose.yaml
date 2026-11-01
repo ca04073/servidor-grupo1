@@ -1,0 +1,90 @@
+
+# ==========================================
+# PROYECTO: REDES Y VOLUMENES DOCKER
+# ==========================================
+
+services:
+
+  # 7.1 - Nginx conectado a la red personalizada
+  nginx-red:
+    image: nginx:latest
+    container_name: nginx-red
+    ports:
+      - "8082:80"
+    networks:
+      - red-proyecto
+
+  # 7.2 - Nginx utilizando un volumen persistente
+  nginx-volumen:
+    image: nginx:latest
+    container_name: nginx-volumen
+    ports:
+      - "8083:80"
+    volumes:
+      - volumen-web:/usr/share/nginx/html
+
+  # 8.1 - Alpine para probar conectividad
+  alpine-prueba:
+    image: alpine:latest
+    container_name: alpine-prueba
+    command: sleep infinity
+    networks:
+      - red-proyecto
+
+# ==========================================
+# VOLUMENES
+# ==========================================
+volumes:
+  volumen-web:
+    name: volumen-web
+
+# ==========================================
+# REDES
+# ==========================================
+networks:
+  red-proyecto:
+    name: red-proyecto
+    driver: bridge
+
+# ==========================================
+# COMANDOS DE EJECUCION Y VERIFICACION
+# ==========================================
+
+# 1. Levantar todos los contenedores:
+# docker compose up -d
+
+# 2. Verificar contenedores activos:
+# docker compose ps
+
+# 3. Verificar la red personalizada:
+# docker network ls
+# docker network inspect red-proyecto
+
+# 4. Verificar el volumen:
+# docker volume ls
+# docker volume inspect volumen-web
+
+# 5. Comprobar Nginx en el puerto 8082:
+# curl http://localhost:8082
+
+# 6. Comprobar Nginx en el puerto 8083:
+# curl http://localhost:8083
+
+# 7. Entrar al contenedor Alpine:
+# docker compose exec alpine-prueba sh
+
+# 8. Instalar ping dentro de Alpine:
+# apk add --no-cache iputils
+
+# 9. Probar conectividad con Nginx:
+# ping -c 4 nginx-red
+
+# 10. Salir de Alpine:
+# exit
+
+# 11. Detener y eliminar los contenedores:
+# docker compose down
+
+# NOTA: No utilizar "docker compose down -v"
+# si se desea conservar el volumen persistente.
+
